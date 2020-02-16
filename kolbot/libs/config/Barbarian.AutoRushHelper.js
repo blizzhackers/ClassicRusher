@@ -16,10 +16,13 @@ function LoadConfig() {
 	 */
 
 	// Battle orders script - Use this for 2+ characters (for example BO barb + sorc)
-	Scripts.BattleOrders = 1;
+	Scripts.BattleOrders = true;
 		Config.BattleOrders.Mode = 0; // 0 = give BO, 1 = get BO
-		Config.BattleOrders.Wait = false; // Idle until the player that received BO leaves.
+		Config.BattleOrders.Idle = false; // Idle until the player that received BO leaves.
 		Config.BattleOrders.Getters = ["kolxii-d"]; // List of players to wait for before casting Battle Orders (mode 0). All players must be in the same area as the BOer.
+		Config.BattleOrders.QuitOnFailure = false; // Quit the game if BO fails
+		Config.BattleOrders.SkipIfTardy = true; // Proceed with scripts if other players already moved on from BO spot
+		Config.BattleOrders.Wait = 10; // Duration to wait for players to join game in seconds (default: 10)
 
 	Scripts.AutoRushHelper = 1;
 
@@ -32,6 +35,8 @@ function LoadConfig() {
 
 	Config.Leader = ""; // Leader's ingame character name. Leave blank to try auto-detection (works in AutoBaal, Wakka, MFHelper)
 	Config.QuitList = [AutoRush.Rusher.charName, AutoRush.Helper.charName];
+	Config.QuitListMode = 0; // 0 = use character names; 1 = use profile names (all profiles must run on the same computer).
+	Config.QuitListDelay = []; // Quit the game with random delay in case of using Config.QuitList. Example: Config.QuitListDelay = [1, 10]; will exit with random delay between 1 and 10 seconds.
 
 
 	// *** special scripts ***
@@ -55,28 +60,34 @@ function LoadConfig() {
 	Scripts.IPHunter = false;
 		Config.IPHunter.IPList = []; // List of IPs to look for. example: [165, 201, 64]
 		Config.IPHunter.GameLength = 3; // Number of minutes to stay in game if ip wasn't found
-	Scripts.ShopBot = false; // Fast waypoint-based shopbot, alpha version
-		Config.ShopBot.ShopNPC = "Anya"; // Only Anya for now
-		// Scan only selected classids for maximum speed. See libs/config/templates/ShopBot.txt
-		Config.ShopBot.ScanIDs = [187, 188, 194, 195, 326, 327, 338, 373, 397, 443, 449];
-	Scripts.ChestMania = false; // Open chests in configured areas
+	Scripts.ShopBot = false; // Shopbot script. Automatically uses shopbot.nip and ignores other pickits.
+		// Supported NPCs: Akara, Charsi, Gheed, Elzix, Fara, Drognan, Ormus, Asheara, Hratli, Jamella, Halbu, Anya. Multiple NPCs are also supported, example: [NPC.Elzix, NPC.Fara]
+		// Use common sense when combining NPCs. Shopping in different acts will probably lead to bugs.
+		Config.ShopBot.ShopNPC = NPC.Anya;
+		// Put item classid numbers or names to scan (remember to put quotes around names). Leave blank to scan ALL items. See libs/config/templates/ShopBot.txt
+		Config.ShopBot.ScanIDs = [];
+		Config.ShopBot.CycleDelay = 0; // Delay between shopping cycles in milliseconds, might help with crashes.
+		Config.ShopBot.QuitOnMatch = false; // Leave game as soon as an item is shopped.
+	Scripts.ChestMania = false; // Open chests in configured areas. See sdk/areas.txt
 		Config.ChestMania.Act1 = [13, 14, 15, 16, 18, 19]; // List of act 1 areas to open chests in
 		Config.ChestMania.Act2 = [55, 59, 65, 66, 67, 68, 69, 70, 71, 72]; // List of act 2 areas to open chests in
 		Config.ChestMania.Act3 = [79, 80, 81, 92, 93, 84, 85, 90]; // List of act 3 areas to open chests in
 		Config.ChestMania.Act4 = []; // List of act 4 areas to open chests in
 		Config.ChestMania.Act5 = [115, 116, 119, 125, 126, 127]; // List of act 5 areas to open chests in
+	Scripts.ClearAnyArea = false; // Clear any area. Uses Config.ClearType to determine which type of monsters to kill.
+		Config.ClearAnyArea.AreaList = []; // List of area ids to clear. See sdk/areas.txt
 
 
 	// Town settings
 	Config.HealHP = 50; // Go to a healer if under designated percent of life.
 	Config.HealMP = 0; // Go to a healer if under designated percent of mana.
-	Config.HealStatus = false // Go to a healer if poisoned or cursed
+	Config.HealStatus = false; // Go to a healer if poisoned or cursed
 	Config.UseMerc = true; // Use merc. This is ignored and always false in d2classic.
 	Config.MercWatch = false; // Instant merc revive during battle.
 
 	// Potion settings
 	Config.UseHP = 75; // Drink a healing potion if life is under designated percent.
-	Config.UseRejuvHP = 40;  // Drink a rejuvenation potion if life is under designated percent.
+	Config.UseRejuvHP = 40; // Drink a rejuvenation potion if life is under designated percent.
 	Config.UseMP = 30; // Drink a mana potion if mana is under designated percent.
 	Config.UseRejuvMP = 0; // Drink a rejuvenation potion if mana is under designated percent.
 	Config.UseMercHP = 75; // Give a healing potion to your merc if his/her life is under designated percent.
@@ -132,18 +143,23 @@ function LoadConfig() {
 	Config.CainID.MinGold = 2500000; // Minimum gold (stash + character) to have in order to use Cain.
 	Config.CainID.MinUnids = 3; // Minimum number of unid items in order to use Cain.
 	Config.FieldID = false; // Identify items in the field instead of going to town.
+	Config.DroppedItemsAnnounce.Enable = false;	// Announce Dropped Items to in-game newbs
+	Config.DroppedItemsAnnounce.Quality = []; // Quality of item to announce. See NTItemAlias.dbl for values. Example: Config.DroppedItemsAnnounce.Quality = [6, 7, 8];
+
+	// Repair settings
+	Config.RepairPercent = 40; // Durability percent of any equipped item that will trigger repairs.
 
 	// Gambling config
 	Config.Gamble = false;
 	Config.GambleGoldStart = 1000000;
 	Config.GambleGoldStop = 500000;
-	
+
 	// Check libs/NTItemAlias.dbl file for other item classids
 	Config.GambleItems.push(520); // Amulet
 	Config.GambleItems.push(522); // Ring
 	Config.GambleItems.push(418); // Circlet
 	Config.GambleItems.push(419); // Coronet
-	
+
 	// Cubing config. All recipes are available in Templates/Cubing.txt
 	Config.Cubing = false; // Set to true to enable cubing.
 
@@ -163,15 +179,28 @@ function LoadConfig() {
 	 */
 	Config.MakeRunewords = false; // Set to true to enable runeword making/rerolling
 
+	// Public game options
+
+	// If LocalChat is enabled, chat can be sent via 'sendCopyData' instead of BNET
+	// To allow 'say' to use BNET, use 'say("msg", true)', the 2nd parameter will force BNET
+	// LocalChat messages will only be visible on clients running on the same PC
+	Config.LocalChat.Enabled = true; // enable the LocalChat system
+	Config.LocalChat.Toggle = false; // optional, set to KEY value to toggle through modes 0, 1, 2
+	Config.LocalChat.Mode = 1; // 0 = disabled, 1 = chat from 'say' (recommended), 2 = all chat (for manual play)
+
+	// If set on true, it simply parties.
+	Config.PublicMode = 2; // 1 = invite and accept, 2 = accept only, 3 = invite only, 0 = disable.
+
 	// General config
-	Config.PublicMode = 2; // 1 = invite, 2 = accept, 0 = disable. If Config.Leader is set, the bot will only accept invites from leader.
+	Config.AutoMap = false; // Set to true to open automap at the beginning of the game.
 	Config.LastMessage = ""; // Message or array of messages to say at the end of the run. Use $nextgame to say next game - "Next game: $nextgame" (works with lead entry point)
 	Config.ShitList = false; // Blacklist hostile players so they don't get invited to party.
 	Config.MinGameTime = 60; // Min game time in seconds. Bot will TP to town and stay in game if the run is completed before.
 	Config.MaxGameTime = 0; // Maximum game time in seconds. Quit game when limit is reached.
-	Config.TeleSwitch = false; // Switch to slot II when teleporting more than 1 node.
+	Config.TeleSwitch = false; // Switch to secondary (non-primary) slot when teleporting more than 5 nodes.
 	Config.OpenChests = false; // Open chests. Controls key buying.
 	Config.MiniShopBot = true; // Scan items in NPC shops.
+	Config.PacketShopping = false; // Use packets to shop. Improves shopping speed.
 	Config.TownCheck = false; // Go to town if out of potions
 	Config.LogExperience = false; // Print experience statistics in the manager.
 	Config.PingQuit = [{Ping: 0, Duration: 0}]; // Quit if ping is over the given value for over the given time period in seconds.
@@ -181,8 +210,10 @@ function LoadConfig() {
 	Config.ScanShrines = [];
 
 	// MF Switch
-	Config.MFSwitchPercent = 0; // Boss life % to switch weapons at. Set to 0 to disable.
-	Config.MFSwitch = 0; // MF weapon slot: 0 = slot I, 1 = slot II
+	Config.MFSwitchPercent = 0; // Boss life % to switch to non-primary weapon slot. Set to 0 to disable.
+
+	// Primary Slot - Bot will try to determine primary slot if not used (non-cta slot that's not empty)
+	Config.PrimarySlot = -1; // Set to use specific weapon slot as primary weapon slot: -1 = disabled, 0 = slot I, 1 = slot II
 
 	// Fastmod config
 	Config.FCR = 0; // 0 - disable, 1 to 255 - set value of faster cast rate 
@@ -190,6 +221,7 @@ function LoadConfig() {
 	Config.FBR = 0; // 0 - disable, 1 to 255 - set value of faster block recovery 
 	Config.IAS = 0; // 0 - disable, 1 to 255 - set value of increased attack speed 
 	Config.PacketCasting = 0; // 0 = disable, 1 = packet teleport, 2 = full packet casting.
+	Config.WaypointMenu = true;
 
 	// Anti-hostile config
 	Config.AntiHostile = false; // Enable anti-hostile
@@ -211,10 +243,12 @@ function LoadConfig() {
 	Config.SkipEnchant = [];
 	// Skip monsters with auras. Possible options: "fanaticism", "might", "holy fire", "blessed aim", "holy freeze", "holy shock". Conviction is bugged, don't use it.
 	Config.SkipAura = [];
+	// Uncomment the following line to always attempt to kill these bosses despite immunities and mods
+	//Config.SkipException = [getLocaleString(2851), getLocaleString(2852), getLocaleString(2853)]; // vizier, de seis, infector
 
 	/* Attack config
 	 * To disable an attack, set it to -1
-	 * Skills MUST be POSITIVE numbers. For reference see http://pastebin.com/baShRwWM
+	 * Skills MUST be POSITIVE numbers. For reference see ...\kolbot\sdk\skills.txt
 	 */
 	Config.AttackSkill[0] = -1; // Preattack skill.
 	Config.AttackSkill[1] = 151; // Primary skill to bosses.
@@ -225,12 +259,15 @@ function LoadConfig() {
 	// Low mana skills - these will be used if main skills can't be cast.
 	Config.LowManaSkill[0] = 0; // Low mana skill.
 
+	Config.NoTele = false; // Restrict char from teleporting. Useful for low level/low mana chars
 	Config.BossPriority = false; // Set to true to attack Unique/SuperUnique monsters first when clearing
 	Config.ClearType = 0xF; // Monster spectype to kill in level clear scripts (ie. Mausoleum). 0xF = skip normal, 0x7 = champions/bosses, 0 = all
+
+	// Wereform setup. Make sure you read Templates/Attacks.txt for attack skill format.
+	Config.Wereform = false; // 0 / false - don't shapeshift, 1 / "Werewolf" - change to werewolf, 2 / "Werebear" - change to werebear
 
 	// Class specific config
 	Config.BOSwitch = 0; // Precast weapon slot - 0 = slot I, 1 = slot II
 	Config.FindItem = false; // Use Find Item skill on corpses after clearing.
-	Config.FindItemSwitch = 0; // Find Item weapon slot - 0 = slot I, 1 = slot II
-	Config.Werewolf = false; // EXPERIMENTAL werewolf attack for Wolfhowl Barbarians. Set attacks to feral rage.
+	Config.FindItemSwitch = false; // Switch to non-primary slot when using Find Item skills
 }

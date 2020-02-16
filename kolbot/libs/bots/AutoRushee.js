@@ -89,7 +89,7 @@ function AutoRushee() {
 
 	this.tyraelTalk = function () {
 		var i,
-			npc = getUnit(1, "tyrael");
+			npc = getUnit(1, NPC.Tyrael);
 
 		if (!npc) {
 			return false;
@@ -162,7 +162,7 @@ function AutoRushee() {
 		var npc,
 			preArea = me.area;
 
-		if (me.mode === 17) {
+		if (me.playertype != 1 && me.mode === 17) {
 			me.revive();
 
 			while (!me.inTown) {
@@ -181,9 +181,9 @@ function AutoRushee() {
 					break;
 				}
 
-				Town.move("warriv");
+				Town.move(NPC.Warriv);
 
-				npc = getUnit(1, "warriv");
+				npc = getUnit(1, 155);
 
 				if (!npc || !npc.openMenu()) {
 					return false;
@@ -199,7 +199,7 @@ function AutoRushee() {
 
 				Town.move("palace");
 
-				npc = getUnit(1, "jerhyn");
+				npc = getUnit(1, 201);
 
 				if (!npc || !npc.openMenu()) {
 					Pather.moveTo(5166, 5206);
@@ -208,9 +208,9 @@ function AutoRushee() {
 				}
 
 				me.cancel();
-				Town.move("meshif");
+				Town.move(NPC.Meshif);
 
-				npc = getUnit(1, "meshif");
+				npc = getUnit(1, 210);
 
 				if (!npc || !npc.openMenu()) {
 					return false;
@@ -225,9 +225,9 @@ function AutoRushee() {
 				}
 
 				if (me.inTown) {
-					Town.move("cain");
+					Town.move(NPC.Cain);
 
-					npc = getUnit(1, "deckard cain");
+					npc = getUnit(1, 245);
 
 					if (!npc || !npc.openMenu()) {
 						return false;
@@ -237,7 +237,14 @@ function AutoRushee() {
 					Pather.usePortal(102, leaderName);
 				}
 
-				Pather.moveTo(17591, 8070);
+				delay(1500);
+
+				target = getUnit(2, 342);
+
+				if (target) {
+					Pather.moveTo(target.x - 3, target.y - 1);
+				}
+
 				Pather.usePortal(null);
 
 				break;
@@ -246,16 +253,22 @@ function AutoRushee() {
 					break;
 				}
 
-				Town.move("tyrael");
+				Town.move(NPC.Tyrael);
 
-				npc = getUnit(1, "tyrael");
+				npc = getUnit(1, NPC.Tyrael);
 
 				if (!npc || !npc.openMenu()) {
 					return false;
 				}
 
 				me.cancel();
-				Pather.usePortal(null);
+
+				try {
+					Pather.useUnit(2, 566, 109);
+				} catch (a5e) {
+
+				}
+
 				break;
 			}
 
@@ -361,7 +374,7 @@ function AutoRushee() {
 							delay(500);
 						}
 
-						if (me.mode === 17) {
+						if (me.playertype != 1 && me.mode === 17) {
 							me.revive();
 
 							while (!me.inTown) {
@@ -394,9 +407,9 @@ function AutoRushee() {
 							Pather.usePortal(40, leaderName);
 						}
 
-						Town.move("drognan");
+						Town.move(NPC.Drognan);
 
-						target = getUnit(1, "drognan");
+						target = getUnit(1, NPC.Drognan);
 
 						if (target && target.openMenu()) {
 							actions.shift();
@@ -424,7 +437,7 @@ function AutoRushee() {
 							delay(500);
 						}
 
-						if (me.mode === 17) {
+						if (me.playertype != 1 && me.mode === 17) {
 							me.revive();
 
 							while (!me.inTown) {
@@ -439,9 +452,9 @@ function AutoRushee() {
 							quit();
 						}
 
-						Town.move("atma");
+						Town.move(NPC.Atma);
 
-						target = getUnit(1, "atma");
+						target = getUnit(1, NPC.Atma);
 
 						if (target) {
 							target.openMenu();
@@ -493,7 +506,7 @@ function AutoRushee() {
 								delay(500);
 							}
 
-							if (me.mode === 17) {
+							if (me.playertype != 1 && me.mode === 17) {
 								me.revive();
 
 								while (!me.inTown) {
@@ -536,7 +549,7 @@ function AutoRushee() {
 								delay(500);
 							}
 
-							if (me.mode === 17) {
+							if (me.playertype != 1 && me.mode === 17) {
 								me.revive();
 
 								while (!me.inTown) {
@@ -564,7 +577,7 @@ function AutoRushee() {
 						if (me.gametype === 0) {
 							D2Bot.restart();
 						} else {
-							if (me.mode === 17) {
+							if (me.playertype != 1 && me.mode === 17) {
 								me.revive();
 
 								while (!me.inTown) {
@@ -607,7 +620,7 @@ function AutoRushee() {
 						break;
 					}
 
-					target = getUnit(1, "jerhyn");
+					target = getUnit(1, NPC.Jerhyn);
 
 					if (target) {
 						target.openMenu();
@@ -654,7 +667,7 @@ function AutoRushee() {
 				}
 			}
 		} catch (e) {
-			if (me.mode === 17) {
+			if (me.playertype != 1 && me.mode === 17) {
 				me.revive();
 
 				while (!me.inTown) {

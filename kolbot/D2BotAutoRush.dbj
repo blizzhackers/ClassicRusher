@@ -1,14 +1,14 @@
 var StarterConfig = {
-	MinGameTime: 40, // Minimum game length in seconds. If a game is ended too soon, the rest of the time is waited in the lobby
+	MinGameTime: 180, // Minimum game length in seconds. If a game is ended too soon, the rest of the time is waited in the lobby
 	CreateGameDelay: 10, // Seconds to wait before creating a new game
 	ResetCount: 0, // Reset game count back to 1 every X games.
 	CharacterDifference: 99, // Character level difference. Set to false to disable character difference.
 	ChatActionsDelay: 2, // Seconds to wait in lobby before entering a channel
-	JoinRetryDelay: 5,
+	JoinRetryDelay: 5, // Time in seconds to wait before next join attempt
 
 	SwitchKeyDelay: 0, // Seconds to wait before switching a used/banned key or after realm down
-	CrashDelay: 0, // Seconds to wait after a d2 window crash
-	FTJDelay: 5, // Seconds to wait after failing to create a game
+	CrashDelay: 120, // Seconds to wait after a d2 window crash
+	FTJDelay: 10, // Seconds to wait after failing to create a game
 	RealmDownDelay: 2, // Minutes to wait after getting Realm Down message
 	UnableToConnectDelay: 5, // Minutes to wait after Unable To Connect message
 	CDKeyInUseDelay: 5, // Minutes to wait before connecting again if CD-Key is in use.
@@ -23,6 +23,7 @@ include("json2.js");
 include("OOG.js");
 include("AutoRush.js");
 include("common/misc.js");
+include("common/util.js");
 
 if (!FileTools.exists("data/" + me.profile + ".json")) {
 	DataFile.create();
@@ -139,21 +140,7 @@ function timer(tick) {
 		return "";
 	}
 
-	var min, sec;
-
-	min = Math.floor((getTickCount() - tick) / 60000).toString();
-
-	if (min <= 9) {
-		min = "0" + min;
-	}
-
-	sec = (Math.floor((getTickCount() - tick) / 1000) % 60).toString();
-
-	if (sec <= 9) {
-		sec = "0" + sec;
-	}
-
-	return " (" + min + ":" + sec + ")";
+	return " (" + new Date(getTickCount() - tick).toISOString().slice(11, -5) + ")";
 }
 
 function main() {
@@ -615,7 +602,7 @@ MainSwitch:
 
 		break;
 	case 19: // Login - Cdkey In Use
-		D2Bot.printToConsole("CD-Key in use by " + ControlAction.getText(4, 158, 310, 485, 40));
+		D2Bot.printToConsole(gameInfo.mpq + " is in use by " + ControlAction.getText(4, 158, 310, 485, 40), 6);
 		D2Bot.CDKeyInUse();
 
 		if (gameInfo.switchKeys) {
@@ -651,7 +638,7 @@ MainSwitch:
 
 		switch (string) {
 		case getLocaleString(10914):
-			D2Bot.printToConsole("LoD key in use by " + ControlAction.getText(4, 158, 310, 485, 40));
+			D2Bot.printToConsole(gameInfo.mpq + " LoD key in use by " + ControlAction.getText(4, 158, 310, 485, 40), 6);
 			D2Bot.CDKeyInUse();
 
 			if (gameInfo.switchKeys) {
@@ -703,12 +690,14 @@ MainSwitch:
 
 		break;
 	case 27: // Gateway Select
+		ControlAction.click(6, 436, 538, 96, 32);
+
 		break;
 	case 28: // Lobby - Game Does Not Exist
 		D2Bot.printToConsole("Game doesn't exist");
 
 		if (gameInfo.rdBlocker) {
-			D2Bot.printToConsole("CDKey is probably flagged.");
+			D2Bot.printToConsole(gameInfo.mpq + " is probably flagged.", 6);
 
 			if (gameInfo.switchKeys) {
 				ControlAction.timeoutDelay("Key switch delay", StarterConfig.SwitchKeyDelay * 1000);

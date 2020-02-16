@@ -47,7 +47,7 @@ function AutoRusher() {
 	};
 
 	this.doAtma = function () {
-		var atma = getUnit(1, "atma");
+		var atma = getUnit(1, NPC.Atma);
 
 		if (atma) {
 			atma.openMenu();

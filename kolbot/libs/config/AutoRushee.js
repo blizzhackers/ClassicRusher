@@ -14,21 +14,23 @@ function LoadConfig() {
 	 * Set to true if you want to run it, set to false if not.
 	 * If you want to change the order of the scripts, just change the order of their lines by using cut and paste.
 	 */
-	 
+
 	Scripts.AutoRushee = 1;
-	
+
 	Config.QuitList = [AutoRush.Rusher.charName, AutoRush.Helper.charName];
+	Config.QuitListMode = 0; // 0 = use character names; 1 = use profile names (all profiles must run on the same computer).
+	Config.QuitListDelay = []; // Quit the game with random delay in case of using Config.QuitList. Example: Config.QuitListDelay = [1, 10]; will exit with random delay between 1 and 10 seconds.
 
 	// Town settings
 	Config.HealHP = 50; // Go to a healer if under designated percent of life.
 	Config.HealMP = 0; // Go to a healer if under designated percent of mana.
-	Config.HealStatus = false // Go to a healer if poisoned or cursed	
+	Config.HealStatus = false; // Go to a healer if poisoned or cursed
 	Config.UseMerc = true; // Use merc. This is ignored and always false in d2classic.
 	Config.MercWatch = false; // Instant merc revive during battle.
 
 	// Potion settings
 	Config.UseHP = 0; // Drink a healing potion if life is under designated percent.
-	Config.UseRejuvHP = 0;  // Drink a rejuvenation potion if life is under designated percent.
+	Config.UseRejuvHP = 0; // Drink a rejuvenation potion if life is under designated percent.
 	Config.UseMP = 0; // Drink a mana potion if mana is under designated percent.
 	Config.UseRejuvMP = 0; // Drink a rejuvenation potion if mana is under designated percent.
 	Config.UseMercHP = 0; // Give a healing potion to your merc if his/her life is under designated percent.
@@ -97,7 +99,7 @@ function LoadConfig() {
 	Config.GambleItems.push(418); // Circlet
 	Config.GambleItems.push(419); // Coronet
 	
-	// Cubing config. All recipes are available in Templates/Cubing.txt
+	/* Cubing config. All recipe names are available in Templates/Cubing.txt. For item names/classids check NTItemAlias.dbl
 	Config.Cubing = false; // Set to true to enable cubing.
 
 	/* Runeword config. All recipes are available in Templates/Runewords.txt
@@ -106,26 +108,43 @@ function LoadConfig() {
 	 */
 	Config.MakeRunewords = false; // Set to true to enable runeword making/rerolling
 
+	// Public game options
+
+	// If LocalChat is enabled, chat can be sent via 'sendCopyData' instead of BNET
+	// To allow 'say' to use BNET, use 'say("msg", true)', the 2nd parameter will force BNET
+	// LocalChat messages will only be visible on clients running on the same PC
+	Config.LocalChat.Enabled = true; // enable the LocalChat system
+	Config.LocalChat.Toggle = false; // optional, set to KEY value to toggle through modes 0, 1, 2
+	Config.LocalChat.Mode = 1; // 0 = disabled, 1 = chat from 'say' (recommended), 2 = all chat (for manual play)
+	// If Config.Leader is set, the bot will only accept invites from leader. If Config.PublicMode is not 0, Baal and Diablo script will open Town Portals.
+
+	// If set on true, it simply parties.
+	Config.PublicMode = 2; // 1 = invite and accept, 2 = accept only, 3 = invite only, 0 = disable.
+
 	// General config
-	Config.PublicMode = 2; // 1 = invite, 2 = accept, 0 = disable. If Config.Leader is set, the bot will only accept invites from leader.
+	Config.AutoMap = false; // Set to true to open automap at the beginning of the game.
 	Config.LastMessage = ""; // Message or array of messages to say at the end of the run. Use $nextgame to say next game - "Next game: $nextgame" (works with lead entry point)
 	Config.ShitList = false; // Blacklist hostile players so they don't get invited to party.
 	Config.MinGameTime = 60; // Min game time in seconds. Bot will TP to town and stay in game if the run is completed before.
 	Config.MaxGameTime = 0; // Maximum game time in seconds. Quit game when limit is reached.
-	Config.TeleSwitch = false; // Switch to slot II when teleporting more than 1 node.
+	Config.TeleSwitch = false; // Switch to secondary (non-primary) slot when teleporting more than 5 nodes.
 	Config.OpenChests = false; // Open chests. Controls key buying.
 	Config.MiniShopBot = true; // Scan items in NPC shops.
+	Config.PacketShopping = false; // Use packets to shop. Improves shopping speed.
 	Config.TownCheck = false; // Go to town if out of potions
 	Config.LogExperience = false; // Print experience statistics in the manager.
 	Config.PingQuit = [{Ping: 0, Duration: 0}]; // Quit if ping is over the given value for over the given time period in seconds.
+	Config.Silence = false; // Make the bot not say a word. Do not use in combination with LocalChat
 
 	// Shrine Scanner - scan for shrines while moving.
 	// Put the shrine types in order of priority (from highest to lowest). For a list of types, see sdk/shrines.txt
 	Config.ScanShrines = [];
 
 	// MF Switch
-	Config.MFSwitchPercent = 0; // Boss life % to switch weapons at. Set to 0 to disable.
-	Config.MFSwitch = 0; // MF weapon slot: 0 = slot I, 1 = slot II
+	Config.MFSwitchPercent = 0; // Boss life % to switch to non-primary weapon slot. Set to 0 to disable.
+
+	// Primary Slot - Bot will try to determine primary slot if not used (non-cta slot that's not empty)
+	Config.PrimarySlot = -1; // Set to use specific weapon slot as primary weapon slot: -1 = disabled, 0 = slot I, 1 = slot II
 
 	// Fastmod config
 	Config.FCR = 0; // 0 - disable, 1 to 255 - set value of faster cast rate 
@@ -133,7 +152,7 @@ function LoadConfig() {
 	Config.FBR = 0; // 0 - disable, 1 to 255 - set value of faster block recovery 
 	Config.IAS = 0; // 0 - disable, 1 to 255 - set value of increased attack speed 
 	Config.PacketCasting = 0; // 0 = disable, 1 = packet teleport, 2 = full packet casting.
-	
+	Config.WaypointMenu = true;
 	// Anti-hostile config
 	Config.AntiHostile = false; // Enable anti-hostile
 	Config.HostileAction = 0; // 0 - quit immediately, 1 - quit when hostile player is sighted, 2 - attack hostile
@@ -157,7 +176,7 @@ function LoadConfig() {
 
 	/* Attack config
 	 * To disable an attack, set it to -1
-	 * Skills MUST be POSITIVE numbers. For reference see http://pastebin.com/baShRwWM
+	 * Skills MUST be POSITIVE numbers. For reference see ...\kolbot\sdk\skills.txt
 	 */
 	Config.AttackSkill[0] = -1; // Preattack skill.
 	Config.AttackSkill[1] = 0; // Primary skill to bosses.
@@ -171,6 +190,10 @@ function LoadConfig() {
 	Config.LowManaSkill[0] = -1; // Timed low mana skill.
 	Config.LowManaSkill[1] = -1; // Untimed low mana skill.
 
+	Config.NoTele = false; // Restrict char from teleporting. Useful for low level/low mana chars
+	Config.Dodge = false; // Move away from monsters that get too close. Don't use with short-ranged attacks like Poison Dagger.
+	Config.DodgeRange = 15; // Distance to keep from monsters.
+	Config.DodgeHP = 100; // Dodge only if HP percent is less than or equal to Config.DodgeHP. 100 = always dodge.
 	Config.BossPriority = false; // Set to true to attack Unique/SuperUnique monsters first when clearing
 	Config.ClearType = 0xF; // Monster spectype to kill in level clear scripts (ie. Mausoleum). 0xF = skip normal, 0x7 = champions/bosses, 0 = all
 	Config.TeleStomp = false; // Use merc to attack bosses if they're immune to attacks, but not to physical damage

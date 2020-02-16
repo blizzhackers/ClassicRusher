@@ -16,10 +16,13 @@ function LoadConfig() {
 	 */
 
 	// Battle orders script - Use this for 2+ characters (for example BO barb + sorc)
-	Scripts.BattleOrders = 1;
+	Scripts.BattleOrders = true;
 		Config.BattleOrders.Mode = 1; // 0 = give BO, 1 = get BO
-		Config.BattleOrders.Wait = false; // Idle until the player that received BO leaves.
+		Config.BattleOrders.Idle = false; // Idle until the player that received BO leaves.
 		Config.BattleOrders.Getters = []; // List of players to wait for before casting Battle Orders (mode 0). All players must be in the same area as the BOer.
+		Config.BattleOrders.QuitOnFailure = false; // Quit the game if BO fails
+		Config.BattleOrders.SkipIfTardy = true; // Proceed with scripts if other players already moved on from BO spot
+		Config.BattleOrders.Wait = 10; // Duration to wait for players to join game in seconds (default: 10)
 
 	Scripts.AutoRusher = 1;
 
@@ -30,17 +33,19 @@ function LoadConfig() {
 
 	Config.Leader = ""; // Leader's ingame character name. Leave blank to try auto-detection (works in AutoBaal, Wakka, MFHelper)
 	Config.QuitList = [AutoRush.Rusher.charName, AutoRush.Helper.charName];
+	Config.QuitListMode = 0; // 0 = use character names; 1 = use profile names (all profiles must run on the same computer).
+	Config.QuitListDelay = []; // Quit the game with random delay in case of using Config.QuitList. Example: Config.QuitListDelay = [1, 10]; will exit with random delay between 1 and 10 seconds.
 
 	// Town settings
 	Config.HealHP = 80; // Go to a healer if under designated percent of life.
 	Config.HealMP = 80; // Go to a healer if under designated percent of mana.
-	Config.HealStatus = false // Go to a healer if poisoned or cursed
+	Config.HealStatus = false; // Go to a healer if poisoned or cursed
 	Config.UseMerc = true; // Use merc. This is ignored and always false in d2classic.
 	Config.MercWatch = false; // Instant merc revive during battle.
 
 	// Potion settings
 	Config.UseHP = 75; // Drink a healing potion if life is under designated percent.
-	Config.UseRejuvHP = 40;  // Drink a rejuvenation potion if life is under designated percent.
+	Config.UseRejuvHP = 40; // Drink a rejuvenation potion if life is under designated percent.
 	Config.UseMP = 30; // Drink a mana potion if mana is under designated percent.
 	Config.UseRejuvMP = 5; // Drink a rejuvenation potion if mana is under designated percent.
 	Config.UseMercHP = 75; // Give a healing potion to your merc if his/her life is under designated percent.
@@ -96,84 +101,70 @@ function LoadConfig() {
 	Config.CainID.MinGold = 2500000; // Minimum gold (stash + character) to have in order to use Cain.
 	Config.CainID.MinUnids = 3; // Minimum number of unid items in order to use Cain.
 	Config.FieldID = false; // Identify items in the field instead of going to town.
+	Config.DroppedItemsAnnounce.Enable = false;	// Announce Dropped Items to in-game newbs
+	Config.DroppedItemsAnnounce.Quality = []; // Quality of item to announce. See NTItemAlias.dbl for values. Example: Config.DroppedItemsAnnounce.Quality = [6, 7, 8];
 
 	// Gambling config
 	Config.Gamble = false;
 	Config.GambleGoldStart = 1000000;
 	Config.GambleGoldStop = 500000;
-	
+
 	// Check libs/NTItemAlias.dbl file for other item classids
 	Config.GambleItems.push(520); // Amulet
 	Config.GambleItems.push(522); // Ring
 	Config.GambleItems.push(418); // Circlet
 	Config.GambleItems.push(419); // Coronet
-	
-	// Cubing config. All recipes are available in Templates/Cubing.txt
+
+	/* Cubing config. All recipe names are available in Templates/Cubing.txt. For item names/classids check NTItemAlias.dbl
+	 * The format is Config.Recipes.push([recipe_name, item_name_or_classid, etherealness]). Etherealness is optional and only applies to some recipes.
+	 */
 	Config.Cubing = false; // Set to true to enable cubing.
 
-	// All ingredients will be auto-picked, for classids check libs/NTItemAlias.dbl
-	//Config.Recipes.push([Recipe.Gem, 560]); // perfect amethyst
-	//Config.Recipes.push([Recipe.Gem, 565]); // perfect topaz
-	//Config.Recipes.push([Recipe.Gem, 570]); // perfect sapphire
-	//Config.Recipes.push([Recipe.Gem, 575]); // perfect emerald
-	//Config.Recipes.push([Recipe.Gem, 580]); // perfect ruby
-	//Config.Recipes.push([Recipe.Gem, 585]); // perfect diamond
-	//Config.Recipes.push([Recipe.Gem, 600]); // perfect skull
-
-	//Config.Recipes.push([Recipe.Token]); // token of absolution
-	
-	Config.Recipes.push([Recipe.Rune, 630]); // pul -> um
-	Config.Recipes.push([Recipe.Rune, 631]); // um -> mal
-	Config.Recipes.push([Recipe.Rune, 632]); // mal -> ist
-	Config.Recipes.push([Recipe.Rune, 633]); // ist -> gul
-	Config.Recipes.push([Recipe.Rune, 634]); // gul -> vex
-
-	Config.Recipes.push([Recipe.Caster.Amulet]); // Craft Caster Amulet
-	Config.Recipes.push([Recipe.Blood.Ring]); // Craft Blood Ring
-	Config.Recipes.push([Recipe.Blood.Helm, 424]); // Craft Blood Armet
-	Config.Recipes.push([Recipe.HitPower.Gloves, 452]); // Craft Hit Power Vambraces
+	// Ingredients for the following recipes will be auto-picked, for classids check libs/NTItemAlias.dbl
+	//Config.Recipes.push([Recipe.Gem, "Flawless Amethyst"]); // Make Perfect Amethyst
+	//Config.Recipes.push([Recipe.Gem, "Flawless Topaz"]); // Make Perfect Topaz
+	//Config.Recipes.push([Recipe.Gem, "Flawless Sapphire"]); // Make Perfect Sapphire
+	//Config.Recipes.push([Recipe.Gem, "Flawless Emerald"]); // Make Perfect Emerald
+	//Config.Recipes.push([Recipe.Gem, "Flawless Ruby"]); // Make Perfect Ruby
+	//Config.Recipes.push([Recipe.Gem, "Flawless Diamond"]); // Make Perfect Diamond
+	//Config.Recipes.push([Recipe.Gem, "Flawless Skull"]); // Make Perfect Skull
 
 	Config.Recipes.push([Recipe.Reroll.Magic, 421]); // Reroll magic Diadem
 	Config.Recipes.push([Recipe.Reroll.Rare, 421]); // Reroll rare Diadem
 
 	// Base item must be in the pickit, rest is auto-picked
-	Config.Recipes.push([Recipe.Socket.Weapon, 255]); // Socket Thresher
-	Config.Recipes.push([Recipe.Socket.Weapon, 256]); // Socket Cryptic Axe
-	Config.Recipes.push([Recipe.Socket.Armor, 442]); // Socket Sacred Armor
-	Config.Recipes.push([Recipe.Socket.Armor, 443]); // Socket Archon Plate
 
-	Config.Recipes.push([Recipe.Unique.Armor.ToExceptional, 335]); // Upgrade Bloodfist to Exceptional
-	Config.Recipes.push([Recipe.Unique.Armor.ToExceptional, 337]); // Upgrade Magefist to Exceptional
-	Config.Recipes.push([Recipe.Unique.Armor.ToElite, 381]); // Upgrade Bloodfist or Grave Palm to Elite
-	Config.Recipes.push([Recipe.Unique.Armor.ToElite, 383]); // Upgrade Magefist or Lavagout to Elite
-	Config.Recipes.push([Recipe.Unique.Armor.ToElite, 389]); // Upgrade Gore Rider to Elite
-
+	//Config.Recipes.push([Recipe.Reroll.Magic, "Diadem"]); // Reroll magic Diadem
+	//Config.Recipes.push([Recipe.Reroll.Magic, "Grand Charm"]); // Reroll magic Grand Charm (ilvl 91+)
 	/* Runeword config. All recipes are available in Templates/Runewords.txt
-	 * !!!NOTE!!! enhanced damage and enhanced defense on runewords are broken in the core right now
 	 * Keep lines follow pickit format and any given runeword is tested vs ALL lines so you don't need to repeat them
 	 */
 	Config.MakeRunewords = false; // Set to true to enable runeword making/rerolling
 
-	Config.Runewords.push([Runeword.Insight, 255]); // Thresher
-	Config.Runewords.push([Runeword.Insight, 256]); // Cryptic Axe
+	// Public game options
 
-	Config.KeepRunewords.push("[type] == polearm # [meditationaura] == 17");
+	// If LocalChat is enabled, chat can be sent via 'sendCopyData' instead of BNET
+	// To allow 'say' to use BNET, use 'say("msg", true)', the 2nd parameter will force BNET
+	// LocalChat messages will only be visible on clients running on the same PC
+	Config.LocalChat.Enabled = false; // enable the LocalChat system
+	Config.LocalChat.Toggle = false; // optional, set to KEY value to toggle through modes 0, 1, 2
+	Config.LocalChat.Mode = 0; // 0 = disabled, 1 = chat from 'say' (recommended), 2 = all chat (for manual play)
+	// If Config.Leader is set, the bot will only accept invites from leader. If Config.PublicMode is not 0, Baal and Diablo script will open Town Portals.
 
-	Config.Runewords.push([Runeword.Spirit, 447]); // Monarch
-	Config.Runewords.push([Runeword.Spirit, 498]); // Sacred Targe
-
-	Config.KeepRunewords.push("[type] == shield || [type] == auricshields # [fcr] == 35");
+	// If set on true, it simply parties.
+	Config.PublicMode = 1; // 1 = invite and accept, 2 = accept only, 3 = invite only, 0 = disable.
 
 	// General config
-	Config.PublicMode = 1; // 1 = invite, 2 = accept, 0 = disable. If Config.Leader is set, the bot will only accept invites from leader.
+	Config.AutoMap = false; // Set to true to open automap at the beginning of the game.
 	Config.LastMessage = ""; // Message or array of messages to say at the end of the run. Use $nextgame to say next game - "Next game: $nextgame" (works with lead entry point)
 	Config.ShitList = false; // Blacklist hostile players so they don't get invited to party.
 	Config.MinGameTime = 60; // Min game time in seconds. Bot will TP to town and stay in game if the run is completed before.
 	Config.MaxGameTime = 0; // Maximum game time in seconds. Quit game when limit is reached.
-	Config.TeleSwitch = false; // Switch to slot II when teleporting more than 1 node.
+	Config.TeleSwitch = false; // Switch to secondary (non-primary) slot when teleporting more than 5 nodes.
 	Config.OpenChests = false; // Open chests. Controls key buying.
 	Config.MiniShopBot = true; // Scan items in NPC shops.
-	Config.TownCheck = 1; // Go to town if out of potions
+	Config.PacketShopping = false; // Use packets to shop. Improves shopping speed.
+	Config.TownCheck = true; // Go to town if out of potions
 	Config.LogExperience = false; // Print experience statistics in the manager.
 	Config.PingQuit = [{Ping: 0, Duration: 0}]; // Quit if ping is over the given value for over the given time period in seconds.
 
@@ -182,15 +173,18 @@ function LoadConfig() {
 	Config.ScanShrines = [];
 
 	// MF Switch
-	Config.MFSwitchPercent = 0; // Boss life % to switch weapons at. Set to 0 to disable.
-	Config.MFSwitch = 0; // MF weapon slot: 0 = slot I, 1 = slot II
+	Config.MFSwitchPercent = 0; // Boss life % to switch to non-primary weapon slot. Set to 0 to disable.
+
+	// Primary Slot - Bot will try to determine primary slot if not used (non-cta slot that's not empty)
+	Config.PrimarySlot = -1; // Set to use specific weapon slot as primary weapon slot: -1 = disabled, 0 = slot I, 1 = slot II
 
 	// Fastmod config
-	Config.FCR = 255; // 0 - disable, 1 to 255 - set value of faster cast rate 
-	Config.FHR = 255; // 0 - disable, 1 to 255 - set value of faster hit recovery 
-	Config.FBR = 255; // 0 - disable, 1 to 255 - set value of faster block recovery 
-	Config.IAS = 0; // 0 - disable, 1 to 255 - set value of increased attack speed 
+	Config.FCR = 200; // 0 - disable, 1 to 255 - set value of faster cast rate 
+	Config.FHR = 200; // 0 - disable, 1 to 255 - set value of faster hit recovery 
+	Config.FBR = 200; // 0 - disable, 1 to 255 - set value of faster block recovery 
+	Config.IAS = 150; // 0 - disable, 1 to 255 - set value of increased attack speed 
 	Config.PacketCasting = 1; // 0 = disable, 1 = packet teleport, 2 = full packet casting.
+	Config.WaypointMenu = true;
 
 	// Anti-hostile config
 	Config.AntiHostile = false; // Enable anti-hostile
@@ -212,6 +206,8 @@ function LoadConfig() {
 	Config.SkipEnchant = [];
 	// Skip monsters with auras. Possible options: "fanaticism", "might", "holy fire", "blessed aim", "holy freeze", "holy shock". Conviction is bugged, don't use it.
 	Config.SkipAura = [];
+	// Uncomment the following line to always attempt to kill these bosses despite immunities and mods
+	Config.SkipException = [getLocaleString(2851), getLocaleString(2852), getLocaleString(2853)]; // vizier, de seis, infector
 
 	/* Attack config
 	 * To disable an attack, set it to -1
@@ -229,8 +225,19 @@ function LoadConfig() {
 	Config.LowManaSkill[0] = -1; // Timed low mana skill.
 	Config.LowManaSkill[1] = -1; // Untimed low mana skill.
 
-	Config.Dodge = 1; // Move away from monsters that get too close. Don't use with short-ranged attacks like Nova.
-	Config.DodgeHP = 70;
+	/* Advanced Attack config. Allows custom skills to be used on custom monsters.
+	 *	Format: "Monster Name": [timed skill id, untimed skill id]
+	 *	Example: "Baal": [38, -1] to use charged bolt on Baal
+	 *	Multiple entries are separated by commas
+	 */
+	Config.CustomAttack = {
+		//"Monster Name": [-1, -1]
+	};
+
+	Config.NoTele = false; // Restrict char from teleporting. Useful for low level/low mana chars
+	Config.Dodge = true; // Move away from monsters that get too close. Don't use with short-ranged attacks like Poison Dagger.
+	Config.DodgeRange = 15; // Distance to keep from monsters.
+	Config.DodgeHP = 70; // Dodge only if HP percent is less than or equal to Config.DodgeHP. 100 = always dodge.
 	Config.BossPriority = false; // Set to true to attack Unique/SuperUnique monsters first when clearing
 	Config.ClearType = 0xF; // Monster spectype to kill in level clear scripts (ie. Mausoleum). 0xF = skip normal, 0x7 = champions/bosses, 0 = all
 	Config.TeleStomp = false; // Use merc to attack bosses if they're immune to attacks, but not to physical damage
