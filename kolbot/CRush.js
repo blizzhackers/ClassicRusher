@@ -80,7 +80,7 @@ function CRush() {
  */
 function LOG(msg) {
     if (RushConfig.debug) {
-        print("\xFFc;CRush \xFFc0:: " + msg);
+        print("ÿc;CRush ÿc0:: " + msg);
     }
 }
 
@@ -122,7 +122,7 @@ var CopyDataHandler = function(mode, msg) {
             } else if (ask.act < me.act) {
                 result.result = true;
             } else {
-                LOG("Executing \xFFc9" + ask.command + "\xFFc0 have " + ask.time + " second(s) to response.");
+                LOG("Executing ÿc9" + ask.command + "ÿc0 have " + ask.time + " second(s) to response.");
                 result.result = eval(ask.command);
                 if (result.result === undefined) {
                     LOG("Function " + ask.command + " did not returned anything.");
@@ -130,12 +130,12 @@ var CopyDataHandler = function(mode, msg) {
                 }
             }
         } catch (e) {
-            LOG("Failed to execute \xFFc9" + ask.command);
+            LOG("Failed to execute ÿc9" + ask.command);
             result.status = "failed";
             result.result = false;
         } finally {
             if (ask.time > 0) {
-                LOG("Responding with \xFFc<" + result.status + " (" + result.result + ")");
+                LOG("Responding with ÿc<" + result.status + " (" + result.result + ")");
                 sendCopyData(null, ask.profile, 2337, JSON.stringify(result));
             }
         }
@@ -143,11 +143,11 @@ var CopyDataHandler = function(mode, msg) {
         result = JSON.parse(msg);
         switch(result.status) {
             case "success":
-                LOG(result.profile + " executed \xFFc9" + result.command + "\xFFc0 and returned \xFFc<" + result.result);
+                LOG(result.profile + " executed ÿc9" + result.command + "ÿc0 and returned ÿc<" + result.result);
                 Execution = result;
                 break;
             case "failed":
-                LOG("\xFFc1" + result.profile + " failed to execute command");
+                LOG("ÿc1" + result.profile + " failed to execute command");
                 Execution = result;
                 break;
         }
@@ -196,19 +196,19 @@ function JustDoIt(profile, command, wait, act) {
         act = me.act;
     }
     Execution = false;
-    LOG("Requesting function: \xFFc9" + command + "\xFFc0 from " + profile);
+    LOG("Requesting function: ÿc9" + command + "ÿc0 from " + profile);
     Order(profile, command, wait, act);
     var timeout = getTickCount();
     while(Execution === false && wait > 0) {
         if(getTickCount() - timeout > wait * 1000) {
-            LOG("\xFFc1No response from " + profile + " after " + wait + " seconds for \xFFc9" + command + "\xFFc0 - Quiting game.");
+            LOG("ÿc1No response from " + profile + " after " + wait + " seconds for ÿc9" + command + "ÿc0 - Quiting game.");
             throw new Error("No response from " + profile + " after " + wait + " seconds for " + command + " - Quiting game.");
         }
         delay(1000);
     }
     if (wait > 0) {
         if (Execution.status === "failed") {
-            LOG("\xFFc1Profile " + profile + " failed to execute command \xFFc9" + command);
+            LOG("ÿc1Profile " + profile + " failed to execute command ÿc9" + command);
             throw new Error("Profile " + profile + " failed to execute command " + command);
         }
     }
@@ -743,9 +743,9 @@ Rush = function () {
         // We don't have him killed, cant talk to jerhyn, cant talk to Meshif, cant go to A3.
         JustDoIt(Profiles.Rushee[0], "(Commands.checkQuest(14,3)||Commands.checkQuest(14,4)||Commands.checkQuest(14,0))", 10);
         if (Execution.result === false) {
-			//var staff = me.getItem(91);
-			//Storage.Inventory.MoveTo(staff);
-			JustDoIt(Profiles.Rushee[0],"Storage.Inventory.MoveTo(staff)");
+            var staff = me.getItem(91);
+            Storage.Inventory.MoveTo(staff);
+            JustDoIt(Profiles.Rushee[0],"Storage.Inventory.MoveTo(staff)");
             D2Bot.printToConsole("Starting: " + diff + " Duriel.", 7);
             Commands.callPrecast(46, 40, true);
 			//var staff = me.getItem(91);
@@ -1468,12 +1468,17 @@ Commands.cubeStaff = function () {
     if (!staff || !amulet) {
         return !!me.getItem(91);
     }
-    Cubing.openCube();
     Storage.Cube.MoveTo(amulet);
     Storage.Cube.MoveTo(staff);
+    Cubing.openCube();
     transmute();
     delay((me.ping*2||0) + 500);
-    Cubing.emptyCube();
+    staff = me.getItem(91); //add from default kolbot\libs\bots\Rushee.js
+    if (!staff) {
+        return false;
+    }
+    Storage.Inventory.MoveTo(staff); //
+    //Cubing.emptyCube(); // default - changed
     me.cancel();
     return !!me.getItem(91);
 };
