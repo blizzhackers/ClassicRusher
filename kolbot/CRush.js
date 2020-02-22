@@ -743,13 +743,8 @@ Rush = function () {
         // We don't have him killed, cant talk to jerhyn, cant talk to Meshif, cant go to A3.
         JustDoIt(Profiles.Rushee[0], "(Commands.checkQuest(14,3)||Commands.checkQuest(14,4)||Commands.checkQuest(14,0))", 10);
         if (Execution.result === false) {
-            var staff = me.getItem(91);
-            Storage.Inventory.MoveTo(staff);
-            JustDoIt(Profiles.Rushee[0],"Storage.Inventory.MoveTo(staff)");
             D2Bot.printToConsole("Starting: " + diff + " Duriel.", 7);
             Commands.callPrecast(46, 40, true);
-			//var staff = me.getItem(91);
-			//Storage.Inventory.MoveTo(staff);
 
             // EXECUTE
             for (i = 0; i < 3; i++) {
