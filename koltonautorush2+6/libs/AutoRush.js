@@ -8,34 +8,34 @@ var AutoRush = {
 
 	Rusher: {
 		profile: "AutoRusher",
-		charName: "kolxii-d"
+		charName: "AbC"
 	},
 
 	Helper: {
 		profile: "AutoRushHelper",
-		charName: "kolxii-c"
+		charName: "BcD"
 	},
 
 	// Leechers: { "profile 1": [list of character infos], "profile 2": [list of character infos]... }
 
 	Leechers: {
 		"AutoRushee": [
-			{account: "kol12x-at", password: "", realm: "europe", charName: "kolxiix-at", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
+			{account: "Au1", password: "", realm: "europe", charName: "au-i", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
 		],
 		"AutoRushee2": [
-			{account: "kol12x-au", password: "", realm: "europe", charName: "kolxiix-au", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
+			{account: "Au2", password: "", realm: "europe", charName: "au-ii", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
 		],
 		"AutoRushee3": [
-			{account: "kol12x-av", password: "", realm: "europe", charName: "kolxiix-av", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
+			{account: "Au3", password: "", realm: "europe", charName: "au-iii", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
 		],
 		"AutoRushee4": [
-			{account: "kol12x-aw", password: "", realm: "europe", charName: "kolxiix-aw", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
+			{account: "Au4", password: "", realm: "europe", charName: "au-iv", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
 		],
 		"AutoRushee5": [
-			{account: "kol12x-ax", password: "", realm: "europe", charName: "kolxiix-ax", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
+			{account: "Au5", password: "", realm: "europe", charName: "au-v", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
 		],
 		"AutoRushee6": [
-			{account: "kol12x-ay", password: "", realm: "europe", charName: "kolxiix-ay", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
+			{account: "Au6", password: "", realm: "europe", charName: "au-vi", charClass: "paladin", ladder: true, expansion: false, hardcore: false}
 		]
 	},
 
